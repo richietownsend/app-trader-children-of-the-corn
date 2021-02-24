@@ -42,3 +42,58 @@ LIMIT 1
 select distinct category
 from play_store_apps
 
+
+
+--- Find WAZE app in both tables
+
+SELECT name, content_rating
+
+FROM 
+
+	(SELECT name, content_rating
+
+	FROM play_store_apps
+
+	UNION ALL
+
+	SELECT name , content_rating
+
+	FROM  app_store_apps) AS subquery
+
+WHERE name ILIKE '%waze%';
+
+​
+
+-- query with Pricing
+
+--- Covert Play Store price values from Text to float
+
+SELECT price, REPLACE(price,'$','') AS trim_price, CAST(REPLACE(price,'$','')AS float) AS float_price
+
+FROM play_store_apps
+
+WHERE CAST(REPLACE(price,'$','')AS float) > 3.99;
+
+​
+
+​
+
+--Union ALL data with Float price and added a TEXT column to identify app from Each Table
+
+SELECT name, float_price
+
+FROM 
+
+	(SELECT name, content_rating, CAST(REPLACE(price,'$','')AS float) AS float_price, TEXT 'P' as Table_name
+
+	FROM play_store_apps
+
+	UNION ALL
+
+	SELECT name , content_rating, price AS float_price, TEXT 'A' as Table_name
+
+	FROM  app_store_apps) AS subquery
+
+GROUP BY name, float_price
+
+ORDER BY float_price DESC;
