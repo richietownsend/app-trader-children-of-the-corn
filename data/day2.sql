@@ -31,7 +31,9 @@ ORDER BY table_name;
 
 
 
-SELECT a.name
+SELECT DISTINCT a.name
 FROM app_store_apps AS a
 LEFT JOIN play_store_apps AS p
 ON a.name = p.name;
+
+
