@@ -1,24 +1,24 @@
-SELECT 	s2.name,
+SELECT 
 	s2.genre,
-	s2.play_rating,
-	s2.apple_rating,
-	s2.play_price,
-	s2.apple_price,
+	--s2.play_rating,
+	--s2.apple_rating,
+	--s2.play_price,
+	--s2.apple_price,
 	--s2.play_reviews,
 	--s2.apple_reviews,
-	s2.avg_review_count,
+	SUM(s2.avg_review_count) AS sum_avg_review_count
 	--s2.p_longevity_years,
 	--s2.a_longevity_years,
-	ROUND((s2.p_longevity_years + a_longevity_years) / 2, 1 ) AS avg_longevity,
-	s2.play_purchase_price,
-	s2.apple_purchase_price,
-	ROUND((s2.p_longevity_years + a_longevity_years) / 2, 2 ) * 12000 AS total_marketing_cost,
-	s2.play_purchase_price + s2.apple_purchase_price + (ROUND((s2.p_longevity_years + a_longevity_years) / 2, 2 ) * 12000) AS total_spend,
+--	ROUND((s2.p_longevity_years + a_longevity_years) / 2, 1 ) AS avg_longevity,
+	--s2.play_purchase_price,
+	--s2.apple_purchase_price,
+	--ROUND((s2.p_longevity_years + a_longevity_years) / 2, 2 ) * 12000 AS total_marketing_cost,
+	--s2.play_purchase_price + s2.apple_purchase_price + (ROUND((s2.p_longevity_years + a_longevity_years) / 2, 2 ) * 12000) AS total_spend,
 	--s2.p_longevity_years * 60000 AS p_expected_revenue,
 	--s2.a_longevity_years * 60000 AS a_expected_revenue,
-	ROUND((s2.p_longevity_years + a_longevity_years) / 2, 2 ) * 60000 AS apptrader_expected_revenue,
-	(ROUND((s2.p_longevity_years + a_longevity_years) / 2, 2 ) * 60000) - (s2.play_purchase_price + s2.apple_purchase_price + 
-	ROUND((s2.p_longevity_years + a_longevity_years) / 2, 2 ) * 12000) AS apptrader_total_roi	
+	--ROUND((s2.p_longevity_years + a_longevity_years) / 2, 2 ) * 60000 AS apptrader_expected_revenue,
+	--(ROUND((s2.p_longevity_years + a_longevity_years) / 2, 2 ) * 60000) - (s2.play_purchase_price + s2.apple_purchase_price + 
+	--ROUND((s2.p_longevity_years + a_longevity_years) / 2, 2 ) * 12000) AS apptrader_total_roi	
 FROM  (
 	SELECT 	sub.name,
 		a.primary_genre AS genre,
@@ -55,8 +55,8 @@ FROM  (
 	     		) AS sub
 		JOIN app_store_apps AS a
 		ON lower(a.name) = lower(sub.name)
-		WHERE a.primary_genre = 'Games'
 		ORDER BY avg_review_count DESC
 		) AS s2
-ORDER BY apptrader_total_roi DESC
+GROUP BY s2.genre
+ORDER BY sum_avg_review_count DESC
 LIMIT 10;
