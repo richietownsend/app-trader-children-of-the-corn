@@ -1,7 +1,7 @@
 SELECT
 		s3.name,
-		s3.apptrader_total_profit,
-		SUM(s3.apptrader_total_profit) OVER(ORDER BY apptrader_total_profit ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS total_profit
+		s3.total_spend,
+		SUM(s3.total_spend) OVER(ORDER BY total_spend ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cumulative_spend
 FROM (
 SELECT 	s2.name,
 	s2.genre,
@@ -23,7 +23,7 @@ SELECT 	s2.name,
 	--s2.a_longevity_years * 60000 AS a_expected_revenue,
 	ROUND((s2.p_longevity_years + a_longevity_years) / 2, 2 ) * 60000 AS apptrader_expected_revenue,
 	(ROUND((s2.p_longevity_years + a_longevity_years) / 2, 2 ) * 60000) - (s2.play_purchase_price + s2.apple_purchase_price + 
-	ROUND((s2.p_longevity_years + a_longevity_years) / 2, 2 ) * 12000) AS apptrader_total_profit
+	ROUND((s2.p_longevity_years + a_longevity_years) / 2, 2 ) * 12000) AS apptrader_total_roi
 FROM  (
 	SELECT 	sub.name,
 		a.primary_genre AS genre,
@@ -63,6 +63,6 @@ FROM  (
 		WHERE a.primary_genre = 'Games'
 		ORDER BY avg_review_count DESC
 		) AS s2
-		ORDER BY apptrader_total_profit DESC
+		ORDER BY apptrader_total_roi DESC
 		LIMIT 10) AS s3
-ORDER BY total_profit DESC
+ORDER BY cumulative_spend DESC
